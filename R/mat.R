@@ -99,7 +99,7 @@ matCreate <- function(dim, diag.xform = c("sqrt", "log", "identity")) {
       sprintf("      ret[%s] = %s;", d - 1, seC(.m[d, 1]))
     }), collapse = "\n")
     sprintf(
-      "    %sif (_tn == %s){\n%s\n    }", ifelse(-(x + 2) == 0, "", "else "), x - 1,
+      "    %sif (*_tn == %s){\n%s\n    }", ifelse(-(x + 2) == 0, "", "else "), x - 1,
       .str
     )
   }), collapse = "\n")
@@ -107,7 +107,7 @@ matCreate <- function(dim, diag.xform = c("sqrt", "log", "identity")) {
   ## should be a simpler way to express this...
   i <- 0
   omega0 <- sprintf(
-    "    if (_tn == 0){\n%s\n    }",
+    "    if (*_tn == 0){\n%s\n    }",
     paste(sapply(as.vector(omat), function(x) {
       ret <- sprintf("      ret[%s] = %s;", i, seC(x))
       i <<- i + 1
@@ -116,7 +116,7 @@ matCreate <- function(dim, diag.xform = c("sqrt", "log", "identity")) {
   )
   i <- 0
   omega1 <- sprintf(
-    "    else if (_tn == -1){\n%s\n    }",
+    "    else if (*_tn == -1){\n%s\n    }",
     paste(sapply(as.vector(se.inv), function(x) {
       cnt()
       ret <- sprintf("      ret[%s] = %s;", i, seC(x))
@@ -128,7 +128,7 @@ matCreate <- function(dim, diag.xform = c("sqrt", "log", "identity")) {
     i <<- 0
     j <<- j + 1
     sprintf(
-      "    else if (_tn == %s){\n%s\n    }", j,
+      "    else if (*_tn == %s){\n%s\n    }", j,
       paste(sapply(
         as.vector(symengine::D(se.inv, symengine::S(x))),
         function(x) {
@@ -142,7 +142,7 @@ matCreate <- function(dim, diag.xform = c("sqrt", "log", "identity")) {
   ##
 
   mat2 <- sprintf(
-    "if (_tn== NA_INTEGER){\n%s\n    return;  \n}\n",
+    "if (*_tn== NA_INTEGER){\n%s\n    return;  \n}\n",
  paste(paste(gsub(rex::rex("t", capture(any_numbers), "="), "    ret[\\1]=", mat2), ";", sep = ""),
                         collapse = "\n"
                         )
@@ -150,7 +150,7 @@ matCreate <- function(dim, diag.xform = c("sqrt", "log", "identity")) {
   matExpr <- ""
   vecExpr <- "    return;\n  }"
   src <- sprintf(
-    "  %s\nif (_tn == -2){\n    ret[0] = %s;\n    return;\n  }\n  else if (_tn < %s || _tn > %s){\n    ret[0] = NA_REAL;ret[1] = -1; //error(\"d(Omega^-1) derivative outside bounds\");\n  }\n  else if (length_theta != %s){\n    ret[0] = NA_REAL;ret[1] = length_theta;//error(\"requires vector with %s arguments\");\n  }\n%s\n%s\n%s",
+    "  %s\nif (*_tn == -2){\n    ret[0] = %s;\n    return;\n  }\n  else if (*_tn < %s || *_tn > %s){\n    ret[0] = NA_REAL;ret[1] = -1; //error(\"d(Omega^-1) derivative outside bounds\");\n  }\n  else if (*length_theta != %s){\n    ret[0] = NA_REAL;ret[1] = *length_theta;//error(\"requires vector with %s arguments\");\n  }\n%s\n%s\n%s",
     mat2, length(vars), min(diags) - 1, length(vars), length(vars), length(vars),
     paste0(matExpr, omega0), omega1, paste0(omega1p, "\n", vecExpr)
   )
@@ -170,4 +170,34 @@ matCreate <- function(dim, diag.xform = c("sqrt", "log", "identity")) {
   }), d)
   ret <- list(src, fmat)
   return(ret)
+}
+
+
+genOme <- function(mx=12) {
+  omega.c <- devtools::package_file("src/omega.c")
+  file.out <- file(omega.c, "wb")
+  writeLines(
+    paste0(sprintf("//Generated from ::document() for %s dimensions\n#include <R.h>\n#include <Rdefines.h>\n#include <R_ext/Error.h>\n#include <Rmath.h>\nint _nlmixr2omega_matSize(void) {\n  return %d;\n}\n\nvoid _nlmixr2omega_mat(int *dm, double *_t, int *length_theta, int  *_tn, double *ret){\n", mx, mx),
+           paste(vapply(1:mx, function(x) {
+             tmp <- matCreate(x)[[1]]
+             sprintf("%sif (*dm == %s) {\n%s\n",
+                     ifelse(x==1, "", "else "),
+                     x, tmp)
+           }, character(1), USE.NAMES=FALSE), collapse=""), "\n  return;\n}"), file.out)
+  close(file.out)
+  ""
+}
+
+#' Get the number of built-in omega inverses
+#'
+#' 
+#' @return The dimension of the pre-compiled omega matrix translations
+#' @author Matthew L. Fidler
+#' @eval genOme()
+#' @useDynLib nlmixr2omega, .registration=TRUE
+#' @export 
+#' @examples
+#' .nlmixr2omegaBuiltinSize()
+.nlmixr2omegaBuiltinSize <- function() {
+  .Call(`_nlmixr2omega_getBuiltinSize`)
 }
