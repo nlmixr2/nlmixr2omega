@@ -238,19 +238,61 @@ void nlmixr2omega_iniOmeStruct(_nlmixr2omega_ind_omega *ome,
 }
 
 //[[Rcpp::export]]
-Rcpp::XPtr<_nlmixr2omega_full_omega> omegaFromR(List omeList, int diagXform) {
+Rcpp::XPtr<_nlmixr2omega_full_omega> nlmixr2omegaNew(List omeList, int diagXform) {
   _nlmixr2omega_full_omega full;
   _nlmixr2omega_full_omega *fullPtr = &full;
   fullPtr->nomes = omeList.size();
   if (fullPtr->omes != NULL) R_Free(fullPtr->omes);
   fullPtr->omes = R_Calloc(fullPtr->nomes,_nlmixr2omega_ind_omega);
+  fullPtr->nTotTheta = 0;
   for (int i = 0; i < fullPtr->nomes; ++i) {
     _nlmixr2omega_ind_omega *ome = &(fullPtr->omes[i]);
     arma::mat cur = as<arma::mat>(omeList[i]);
     nlmixr2omega_iniOmeStruct(ome, cur, diagXform);
+    fullPtr->nTotTheta += ome->theta.size();
   }
   Rcpp::XPtr<_nlmixr2omega_full_omega> ptr(fullPtr);
   return ptr;
 }
 
+arma::vec _nlmixr2omega_full_getTheta_(_nlmixr2omega_full_omega *fome) {
+  if (fome->nomes == 0) {
+    arma::vec ret;
+    return ret;
+  } else if (fome->nomes == 1) {
+    return fome->omes[0].theta;
+  } else {
+    arma::vec theta = fome->omes[0].theta;
+    for (int i = 1; i < fome->nomes; ++i) {
+      theta = join_cols(theta, fome->omes[i].theta);
+    }
+    return theta;
+  }
+}
 
+//[[Rcpp::export]]
+arma::vec getTheta(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
+  _nlmixr2omega_full_omega* v = p.get();
+  return  _nlmixr2omega_full_getTheta_(v);
+}
+
+void _nlmixr2omega_full_setTheta_(_nlmixr2omega_full_omega *fome,
+                                  arma::vec theta) {
+  if (fome->nTotTheta != theta.size()) {
+    stop("incompatible size with this omega structure");
+  }
+  double *ptr = theta.memptr();
+  for (int i = 0; i < fome->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fome->omes[i]);
+    arma::vec curTheta = arma::vec(ptr, ome->theta.size());
+      _nlmixr2omegaAssignTheta(ome, curTheta);
+      ptr += curTheta.size();
+  }
+}
+
+//[[Rcpp::export]]
+RObject setTheta(Rcpp::XPtr<_nlmixr2omega_full_omega> p, arma::vec theta) {
+  _nlmixr2omega_full_omega* v = p.get();
+  _nlmixr2omega_full_setTheta_(v, theta);  
+  return R_NilValue;
+}

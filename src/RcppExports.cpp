@@ -12,15 +12,38 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// omegaFromR
-Rcpp::XPtr<_nlmixr2omega_full_omega> omegaFromR(List omeList, int diagXform);
-RcppExport SEXP _nlmixr2omega_omegaFromR(SEXP omeListSEXP, SEXP diagXformSEXP) {
+// nlmixr2omegaNew
+Rcpp::XPtr<_nlmixr2omega_full_omega> nlmixr2omegaNew(List omeList, int diagXform);
+RcppExport SEXP _nlmixr2omega_nlmixr2omegaNew(SEXP omeListSEXP, SEXP diagXformSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type omeList(omeListSEXP);
     Rcpp::traits::input_parameter< int >::type diagXform(diagXformSEXP);
-    rcpp_result_gen = Rcpp::wrap(omegaFromR(omeList, diagXform));
+    rcpp_result_gen = Rcpp::wrap(nlmixr2omegaNew(omeList, diagXform));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getTheta
+arma::vec getTheta(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
+RcppExport SEXP _nlmixr2omega_getTheta(SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(getTheta(p));
+    return rcpp_result_gen;
+END_RCPP
+}
+// setTheta
+RObject setTheta(Rcpp::XPtr<_nlmixr2omega_full_omega> p, arma::vec theta);
+RcppExport SEXP _nlmixr2omega_setTheta(SEXP pSEXP, SEXP thetaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type theta(thetaSEXP);
+    rcpp_result_gen = Rcpp::wrap(setTheta(p, theta));
     return rcpp_result_gen;
 END_RCPP
 }

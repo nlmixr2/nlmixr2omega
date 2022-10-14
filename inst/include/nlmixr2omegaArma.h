@@ -52,6 +52,7 @@ public:
   }
   _nlmixr2omega_ind_omega *omes = NULL;
   int nomes = 0;
+  int nTotTheta = 0;
 
 };
 
