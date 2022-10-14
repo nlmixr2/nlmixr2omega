@@ -7,7 +7,7 @@ int _nlmixr2omega_matSize(void) {
   return 12;
 }
 
-void _nlmixr2omega_mat(int *dm, double *_t, int *length_theta, int  *_tn, double *ret){
+void _nlmixr2omega_mat_sqrt(int *dm, double *_t, int *length_theta, int  *_tn, double *ret){
 if (*dm == 1) {
   if (*_tn== NA_INTEGER){
     ret[0]=2;

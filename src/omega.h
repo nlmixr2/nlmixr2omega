@@ -5,6 +5,8 @@ extern "C" {
 #endif
 
   int _nlmixr2omega_matSize(void);
+  void _nlmixr2omega_mat_sqrt(int *dm, double *_t, int *length_theta, int  *_tn, double *ret);
+  void _nlmixr2omega_mat_log(int *dm, double *_t, int *length_theta, int  *_tn, double *ret);
   void _nlmixr2omega_mat(int *dm, double *_t, int *length_theta, int  *_tn, double *ret);
   
 #if defined(__cplusplus)

@@ -174,12 +174,48 @@ matCreate <- function(dim, diag.xform = c("sqrt", "log", "identity")) {
 
 
 genOme <- function(mx=12) {
-  omega.c <- devtools::package_file("src/omega.c")
+  omega.c <- devtools::package_file("src/omegaSqrt.c")
   file.out <- file(omega.c, "wb")
   writeLines(
-    paste0(sprintf("//Generated from ::document() for %s dimensions\n#include <R.h>\n#include <Rdefines.h>\n#include <R_ext/Error.h>\n#include <Rmath.h>\nint _nlmixr2omega_matSize(void) {\n  return %d;\n}\n\nvoid _nlmixr2omega_mat(int *dm, double *_t, int *length_theta, int  *_tn, double *ret){\n", mx, mx),
+    paste0(sprintf("//Generated from ::document() for %s dimensions\n#include <R.h>\n#include <Rdefines.h>\n#include <R_ext/Error.h>\n#include <Rmath.h>\nint _nlmixr2omega_matSize(void) {\n  return %d;\n}\n\nvoid _nlmixr2omega_mat_sqrt(int *dm, double *_t, int *length_theta, int  *_tn, double *ret){\n", mx, mx),
            paste(vapply(1:mx, function(x) {
-             tmp <- matCreate(x)[[1]]
+             tmp <- matCreate(x, diag.xform="sqrt")[[1]]
+             sprintf("%sif (*dm == %s) {\n%s\n",
+                     ifelse(x==1, "", "else "),
+                     x, tmp)
+           }, character(1), USE.NAMES=FALSE), collapse=""), "\n  return;\n}"), file.out)
+  close(file.out)
+  
+  omega.c <- devtools::package_file("src/omegaLog.c")
+  file.out <- file(omega.c, "wb")
+  writeLines(
+    paste0(sprintf("//Generated from ::document() for %s dimensions\n#include <R.h>\n#include <Rdefines.h>\n#include <R_ext/Error.h>\n#include <Rmath.h>\nvoid _nlmixr2omega_mat_log(int *dm, double *_t, int *length_theta, int  *_tn, double *ret){\n", mx),
+           paste(vapply(1:mx, function(x) {
+             tmp <- matCreate(x, diag.xform="log")[[1]]
+             sprintf("%sif (*dm == %s) {\n%s\n",
+                     ifelse(x==1, "", "else "),
+                     x, tmp)
+           }, character(1), USE.NAMES=FALSE), collapse=""), "\n  return;\n}"), file.out)
+  close(file.out)
+  
+  omega.c <- devtools::package_file("src/omegaIdentity.c")
+  file.out <- file(omega.c, "wb")
+  writeLines(
+    paste0(sprintf("//Generated from ::document() for %s dimensions\n#include <R.h>\n#include <Rdefines.h>\n#include <R_ext/Error.h>\n#include <Rmath.h>\nvoid _nlmixr2omega_mat(int *dm, double *_t, int *length_theta, int  *_tn, double *ret){\n", mx),
+           paste(vapply(1:mx, function(x) {
+             tmp <- matCreate(x, diag.xform="identity")[[1]]
+             sprintf("%sif (*dm == %s) {\n%s\n",
+                     ifelse(x==1, "", "else "),
+                     x, tmp)
+           }, character(1), USE.NAMES=FALSE), collapse=""), "\n  return;\n}"), file.out)
+  close(file.out)
+
+    omega.c <- devtools::package_file("src/omegaLog.c")
+  file.out <- file(omega.c, "wb")
+  writeLines(
+    paste0(sprintf("//Generated from ::document() for %s dimensions\n#include <R.h>\n#include <Rdefines.h>\n#include <R_ext/Error.h>\n#include <Rmath.h>\nvoid _nlmixr2omega_mat_log(int *dm, double *_t, int *length_theta, int  *_tn, double *ret){\n", mx),
+           paste(vapply(1:mx, function(x) {
+             tmp <- matCreate(x, diag.xform="log")[[1]]
              sprintf("%sif (*dm == %s) {\n%s\n",
                      ifelse(x==1, "", "else "),
                      x, tmp)

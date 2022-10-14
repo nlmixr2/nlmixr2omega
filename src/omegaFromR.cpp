@@ -48,14 +48,7 @@ extern "C" void _nlmixr2omegaFree() {
   }
 }
 
-extern "C" void _nlmixr2omegaAssignFun(_nlmixr2omega_ind_omega *ome,
-                                       _nlmixr2omega_mat_t fun) {
-  ome->cFun = fun;
-}
-
-extern "C" void _nlmixr2omegaAssignDefaultFun(_nlmixr2omega_ind_omega *ome) {
-  ome->cFun = _nlmixr2omega_mat;
-}
+//extern "C" int _nlmixr2omega_matSize() { return 1;}
 
 extern "C" void _nlmixr2omegaAssertFun(_nlmixr2omega_ind_omega *ome) {
   if (ome->cFun == NULL) {
@@ -254,12 +247,18 @@ void nlmixr2omega_iniOmeStruct(_nlmixr2omega_ind_omega *ome,
   arma::mat in =  nlmixr2omega_cholInv(mat);
   switch (diagXform) {
   case nlmixr2omega_sqrt:
-    diag(in) = sqrt(diag(in));
+    in.diag() = sqrt(in.diag());
+    ome->cFun = _nlmixr2omega_mat_sqrt;
+    break;
   case nlmixr2omega_log:
-    diag(in) = log(diag(in));
+    in.diag() = log(in.diag());
+    ome->cFun = _nlmixr2omega_mat_log;
+  default:
+    ome->cFun = _nlmixr2omega_mat;
+    break;
   }
   // sum_{k=1}^{n} k = n*(n+1)/2
-  arma::vec theta(0.5 * in.n_row * (in.n_row + 1.0));
+  arma::vec theta(0.5 * in.n_rows * (in.n_rows + 1.0));
   int j = 0;
   for (unsigned int j = 0; j < in.n_rows; ++j) {
     for (unsigned int i = j; i < in.n_rows; ++i) {
