@@ -245,11 +245,13 @@ Rcpp::XPtr<_nlmixr2omega_full_omega> nlmixr2omegaNew(List omeList, int diagXform
   if (fullPtr->omes != NULL) R_Free(fullPtr->omes);
   fullPtr->omes = R_Calloc(fullPtr->nomes,_nlmixr2omega_ind_omega);
   fullPtr->nTotTheta = 0;
+  fullPtr->nTotDim = 0;
   for (int i = 0; i < fullPtr->nomes; ++i) {
     _nlmixr2omega_ind_omega *ome = &(fullPtr->omes[i]);
     arma::mat cur = as<arma::mat>(omeList[i]);
     nlmixr2omega_iniOmeStruct(ome, cur, diagXform);
     fullPtr->nTotTheta += ome->theta.size();
+    fullPtr->nTotDim += ome->dim;
   }
   Rcpp::XPtr<_nlmixr2omega_full_omega> ptr(fullPtr);
   return ptr;

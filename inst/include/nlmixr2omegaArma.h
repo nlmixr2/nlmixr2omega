@@ -53,14 +53,12 @@ public:
   _nlmixr2omega_ind_omega *omes = NULL;
   int nomes = 0;
   int nTotTheta = 0;
+  int nTotDim = 0;
 
 };
 
 
 #define nlmixr2omega_sqrt 1
 #define nlmixr2omega_log 2
-
-
-extern _nlmixr2omega_ind_omega *_nlmixr2omegaGlobalOmega;
 
 #endif
