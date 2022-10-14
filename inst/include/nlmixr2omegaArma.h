@@ -42,9 +42,17 @@ struct _nlmixr2omega_ind_omega {
   arma::cube omega47Cube; 
 };
 
-struct _nlmixr2omega_full_omega {
-  _nlmixr2omega_ind_omega *omes;
+class _nlmixr2omega_full_omega {
+public:
+  _nlmixr2omega_full_omega() {
+    
+  }
+  ~_nlmixr2omega_full_omega() {
+    if (omes != NULL) R_Free(omes);
+  }
+  _nlmixr2omega_ind_omega *omes = NULL;
   int nomes = 0;
+
 };
 
 

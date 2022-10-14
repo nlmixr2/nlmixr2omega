@@ -237,4 +237,20 @@ void nlmixr2omega_iniOmeStruct(_nlmixr2omega_ind_omega *ome,
   _nlmixr2omegaAssignTheta(ome, theta);
 }
 
+//[[Rcpp::export]]
+Rcpp::XPtr<_nlmixr2omega_full_omega> omegaFromR(List omeList, int diagXform) {
+  _nlmixr2omega_full_omega full;
+  _nlmixr2omega_full_omega *fullPtr = &full;
+  fullPtr->nomes = omeList.size();
+  if (fullPtr->omes != NULL) R_Free(fullPtr->omes);
+  fullPtr->omes = R_Calloc(fullPtr->nomes,_nlmixr2omega_ind_omega);
+  for (int i = 0; i < fullPtr->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fullPtr->omes[i]);
+    arma::mat cur = as<arma::mat>(omeList[i]);
+    nlmixr2omega_iniOmeStruct(ome, cur, diagXform);
+  }
+  Rcpp::XPtr<_nlmixr2omega_full_omega> ptr(fullPtr);
+  return ptr;
+}
+
 

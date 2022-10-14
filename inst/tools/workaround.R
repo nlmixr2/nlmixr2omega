@@ -1,4 +1,17 @@
-## This is only for rxode2
+## This is only for nlmixr2omega
+
+.in <- suppressWarnings(readLines("src/RcppExports.cpp"))
+.w <- which(regexpr("Rcpp[.]h", .in) != -1)[1]
+if (regexpr("nlmixr2omegaArma[.]h", .in[.w+1]) == -1) {
+  .in <- c(.in[seq(1,.w)],
+           '#include "../inst/include/nlmixr2omegaArma.h"',
+           .in[seq(.w+1, length(.in))])
+  file.out <- file("src/RcppExports.cpp", "wb")
+  writeLines(.in, file.out)
+  close(file.out)
+}
+
+
 .in <- suppressWarnings(readLines("src/Makevars.in"))
 .in <- gsub("@ARMA@", file.path(find.package("RcppArmadillo"),"include"), .in)
 #.in <- gsub("@BH@", file.path(find.package("BH"),"include"), .in)
