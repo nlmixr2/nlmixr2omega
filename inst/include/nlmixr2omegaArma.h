@@ -42,6 +42,11 @@ struct _nlmixr2omega_ind_omega {
   arma::cube omega47Cube; 
 };
 
+struct _nlmixr2omega_full_omega {
+  _nlmixr2omega_ind_omega *omes;
+  int nomes = 0;
+};
+
 
 #define nlmixr2omega_sqrt 1
 #define nlmixr2omega_log 2

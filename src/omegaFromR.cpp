@@ -25,38 +25,7 @@ using namespace Rcpp;
 #define _(String) (String)
 #endif
 
-
-
-_nlmixr2omega_ind_omega *_nlmixr2omegaGlobalOmega = NULL;
-int _nlmixr2omegaGlobalOmegaN = 0;
-
-extern "C" void _nlmixr2omegaEnsure(int mx){
-  if (_nlmixr2omegaGlobalOmegaN < mx) {
-    if (_nlmixr2omegaGlobalOmega != NULL) {
-      R_Free(_nlmixr2omegaGlobalOmega);
-      _nlmixr2omegaGlobalOmega=NULL;
-    }
-    _nlmixr2omegaGlobalOmega = R_Calloc(mx, _nlmixr2omega_ind_omega);
-    _nlmixr2omegaGlobalOmegaN = mx;
-  }
-}
-
-extern "C" void _nlmixr2omegaFree() {
-  if (_nlmixr2omegaGlobalOmega != NULL) {
-    R_Free(_nlmixr2omegaGlobalOmega);
-    _nlmixr2omegaGlobalOmegaN = 0;
-  }
-}
-
-//extern "C" int _nlmixr2omega_matSize() { return 1;}
-
-extern "C" void _nlmixr2omegaAssertFun(_nlmixr2omega_ind_omega *ome) {
-  if (ome->cFun == NULL) {
-    Rf_errorcall(R_NilValue, _("matrix inversion function is not loaded"));
-  }
-}
-
-static inline void _nlmixr2omegaAssignTheta(_nlmixr2omega_ind_omega *ome, arma::vec theta) {
+void _nlmixr2omegaAssignTheta(_nlmixr2omega_ind_omega *ome, arma::vec theta) {
   ome->theta = theta;
   // sum_{k=1}^{n} k = n*(n+1)/2
   int d0 = theta.size();
