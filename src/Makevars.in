@@ -1,0 +1,11 @@
+# -*- mode: makefile-gmake -*-
+CXX_STD = CXX14
+CXX14STD = @CXX14STD@
+
+################################################################################
+## Package library flags.
+PKG_LIBS    = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(SHLIB_OPENMP_CXXFLAGS)
+
+# Release options
+PKG_CFLAGS  =  -D_isnlmixr2omega_
+PKG_CXXFLAGS = $(SHLIB_OPENMP_CXXFLAGS) -D_isnlmixr2omega_ 

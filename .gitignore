@@ -1,3 +1,5 @@
 *.o
 *.so
 /.Rhistory
+/R/nlmixr2omega_md5.R
+/.RData

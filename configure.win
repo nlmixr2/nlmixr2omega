@@ -1,0 +1,13 @@
+#! /bin/sh
+
+${R_HOME}/bin/R CMD BATCH  inst/tools/workaround.R
+rm workaround.Rout
+
+echo --------[[begin src/Makevars.win]]--------
+cat src/Makevars.win
+echo --------[[end src/Makevars.win]]--------
+
+
+echo --------[begin R/nlmixr2omega_md5.R]--------
+cat R/nlmixr2omega_md5.R
+echo --------[end R/nlmixr2omega_md5.R]--------
