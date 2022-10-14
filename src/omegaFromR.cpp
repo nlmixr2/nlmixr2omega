@@ -49,7 +49,7 @@ extern "C" void _nlmixr2omegaFree() {
 }
 
 extern "C" void _nlmixr2omegaAssignFun(_nlmixr2omega_ind_omega *ome,
-                                      _nlmixr2omega_mat_t fun) {
+                                       _nlmixr2omega_mat_t fun) {
   ome->cFun = fun;
 }
 
@@ -230,4 +230,43 @@ arma::cube nlmixr2omega_omega47(_nlmixr2omega_ind_omega *ome) {
   ome->omega47Bool = true;
   return ome->omega47Cube;
 }
+
+// Inverts the matrix
+arma::mat nlmixr2omega_inv(arma::mat &smatrix) {
+  // Invert matrix using RcppArmadillo.
+  arma::mat imat;
+  bool success;
+  success = arma::inv(imat, smatrix);
+  if (!success){
+    imat = arma::pinv(smatrix);
+    //REprintf(_("matrix seems singular; Using pseudo-inverse\n"));
+  }
+  return imat;
+}
+
+// Get the cholesky decomposition of the inverse
+arma::mat nlmixr2omega_cholInv(arma::mat &mat) {
+  return arma::chol(nlmixr2omega_inv(mat));
+}
+
+void nlmixr2omega_iniOmeStruct(_nlmixr2omega_ind_omega *ome,
+                               arma::mat &mat, int diagXform) {
+  arma::mat in =  nlmixr2omega_cholInv(mat);
+  switch (diagXform) {
+  case nlmixr2omega_sqrt:
+    diag(in) = sqrt(diag(in));
+  case nlmixr2omega_log:
+    diag(in) = log(diag(in));
+  }
+  // sum_{k=1}^{n} k = n*(n+1)/2
+  arma::vec theta(0.5 * in.n_row * (in.n_row + 1.0));
+  int j = 0;
+  for (unsigned int j = 0; j < in.n_rows; ++j) {
+    for (unsigned int i = j; i < in.n_rows; ++i) {
+      theta(j)  = in(i, j);
+    }
+  }
+  _nlmixr2omegaAssignTheta(ome, theta);
+}
+
 

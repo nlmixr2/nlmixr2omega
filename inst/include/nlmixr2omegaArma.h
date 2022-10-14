@@ -43,6 +43,8 @@ struct _nlmixr2omega_ind_omega {
 };
 
 
+#define nlmixr2omega_sqrt 1
+#define nlmixr2omega_log 2
 
 
 extern _nlmixr2omega_ind_omega *_nlmixr2omegaGlobalOmega;
