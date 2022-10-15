@@ -237,3 +237,44 @@ genOme <- function(mx=12) {
 .nlmixr2omegaBuiltinSize <- function() {
   .Call(`_nlmixr2omega_getBuiltinSize`)
 }
+
+
+#' Create a nlmixr2omega for use in focei
+#'
+#' 
+#' @param mat Matrix for conversion
+#' @param diag.xform Form of the diagonal transformation
+#' @return nlmixr2omega object
+#' @author Matthew L. Fidler
+#' @export
+#' 
+#' @examples
+#' 
+#' d <- 10
+#' m <- matrix(rnorm(d^2), d, d)
+#' mcov <- tcrossprod(m, m)
+#' nlmixr2omega(mcov)
+#' 
+nlmixr2omega <- function(mat, diag.xform = c("sqrt", "log", "identity")) {
+  diag.xform <- as.integer(c("sqrt"=1L,
+                             "log"=2L,
+                             "identity"=0L)[match.arg(diag.xform)])
+  .dn <- dimnames(mat)
+  .in <- lotri::lotriMatInv(mat)
+  .ptr <- .Call(`_nlmixr2omega_nlmixr2omegaNew`, .in, diag.xform)
+  .ret <- list(.ptr, .dn)
+  class(.ret) <- "nlmixr2omega"
+  .ret
+}
+
+# .ntheta
+# .xType
+# .omega
+
+.getOmega <- function(x) {
+  if (!inherits(x, "nlmixr2omega")) stop("not a 'nlmixr2omega' object")
+  .ptr <- x[[1]]
+  .ome <- .Call(`_nlmixr2omega_getOmegaR`, .ptr)
+  dimnames(.ome) <- x[[2]]
+  .ome
+}
