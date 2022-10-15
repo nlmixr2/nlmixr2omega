@@ -54,7 +54,6 @@ public:
   int nomes = 0;
   int nTotTheta = 0;
   int nTotDim = 0;
-
 };
 
 

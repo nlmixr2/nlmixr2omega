@@ -79,7 +79,7 @@ arma::cube nlmixr2omega_dOmegaInv(_nlmixr2omega_ind_omega *ome) {
   return ome->dOmegaInvCube;
 }
 
-arma::mat nlmixr2omegt_dDomegaInv(_nlmixr2omega_ind_omega *ome) {
+arma::mat nlmixr2omega_dDomegaInv(_nlmixr2omega_ind_omega *ome) {
   if (ome->dDomegaInvBool) return (ome->dDomegaInvMat);
   int ts = ome->theta.size();
   // dim  x ntheta ; "d.D.omegaInv"
@@ -91,7 +91,7 @@ arma::mat nlmixr2omegt_dDomegaInv(_nlmixr2omega_ind_omega *ome) {
   }
   ome->dDomegaInvMat = ret;
   ome->dDomegaInvBool = true;
-  return (ome->dDomegaInvMat);
+  return ome->dDomegaInvMat;
 }
 
 
@@ -161,7 +161,7 @@ arma::vec nlmixr2omega_tr28(_nlmixr2omega_ind_omega *ome) {
   arma::mat omega = nlmixr2omega_omega(ome);
   arma::cube dOmegaInv = nlmixr2omega_dOmegaInv(ome);
   arma::vec tr28(ts);
-  for (unsigned int i = ts;i--;){
+  for (unsigned int i = ts; i--;){
     arma::mat cur = (dOmegaInv.slice(i) * omega);
     tr28[i] =0.5*sum(cur.diag());
   }
@@ -314,7 +314,140 @@ arma::mat _nlmixr2omega_full_cholOmegaInv(_nlmixr2omega_full_omega *fome) {
 }
 
 //[[Rcpp::export]]
-arma::mat getOmegaInv(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
+arma::mat getCholOmegaInv(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
   _nlmixr2omega_full_omega* v = p.get();
   return _nlmixr2omega_full_cholOmegaInv(v);
+}
+
+arma::mat _nlmixr2omega_full_omegaInv(_nlmixr2omega_full_omega *fome) {
+  arma::mat ret(fome->nTotDim, fome->nTotDim, arma::fill::zeros);
+  int curBlock = 0;
+  for (int i = 0; i < fome->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fome->omes[i]);
+    int curDim = ome->dim;
+    ret.submat(curBlock, curBlock,
+               curBlock+curDim, curBlock+curDim) =
+      nlmixr2omega_omegaInv(ome);
+    curBlock += curDim;
+  }
+  return ret;
+}
+
+//[[Rcpp::export]]
+arma::mat getOmegaInv(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
+  _nlmixr2omega_full_omega* v = p.get();
+  return _nlmixr2omega_full_omegaInv(v);
+}
+
+arma::mat _nlmixr2omega_full_dDomegaInv(_nlmixr2omega_full_omega *fome) {
+  arma::mat ret(fome->nTotDim, fome->nTotDim, arma::fill::zeros);
+  int curBlock = 0;
+  for (int i = 0; i < fome->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fome->omes[i]);
+    int curDim = ome->dim;
+    ret.submat(curBlock, curBlock,
+               curBlock+curDim, curBlock+curDim) =
+      nlmixr2omega_dDomegaInv(ome);
+    curBlock += curDim;
+  }
+  return ret;
+}
+
+//[[Rcpp::export]]
+arma::mat getdDomegaInv(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
+  _nlmixr2omega_full_omega* v = p.get();
+  return _nlmixr2omega_full_dDomegaInv(v);
+}
+
+arma::mat _nlmixr2omega_full_cholOmega1(_nlmixr2omega_full_omega *fome) {
+  arma::mat ret(fome->nTotDim, fome->nTotDim, arma::fill::zeros);
+  int curBlock = 0;
+  for (int i = 0; i < fome->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fome->omes[i]);
+    int curDim = ome->dim;
+    ret.submat(curBlock, curBlock,
+               curBlock+curDim, curBlock+curDim) =
+      nlmixr2omega_cholOmega1(ome);
+    curBlock += curDim;
+  }
+  return ret;
+}
+
+//[[Rcpp::export]]
+arma::mat getCholOmega1(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
+  _nlmixr2omega_full_omega* v = p.get();
+  return _nlmixr2omega_full_cholOmega1(v);
+}
+
+arma::mat _nlmixr2omega_full_omegaR(_nlmixr2omega_full_omega *fome) {
+  arma::mat ret(fome->nTotDim, fome->nTotDim, arma::fill::zeros);
+  int curBlock = 0;
+  for (int i = 0; i < fome->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fome->omes[i]);
+    int curDim = ome->dim;
+    ret.submat(curBlock, curBlock,
+               curBlock+curDim, curBlock+curDim) =
+      nlmixr2omega_omega(ome);
+    curBlock += curDim;
+  }
+  return ret;
+}
+
+//[[Rcpp::export]]
+arma::mat getOmegaR(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
+  _nlmixr2omega_full_omega* v = p.get();
+  return _nlmixr2omega_full_omegaR(v);
+}
+
+arma::mat _nlmixr2omega_full_cholOmega(_nlmixr2omega_full_omega *fome) {
+  arma::mat ret(fome->nTotDim, fome->nTotDim, arma::fill::zeros);
+  int curBlock = 0;
+  for (int i = 0; i < fome->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fome->omes[i]);
+    int curDim = ome->dim;
+    ret.submat(curBlock, curBlock,
+               curBlock+curDim, curBlock+curDim) =
+      nlmixr2omega_cholOmega(ome);
+    curBlock += curDim;
+  }
+  return ret;
+}
+
+//[[Rcpp::export]]
+arma::mat getCholOmega(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
+  _nlmixr2omega_full_omega* v = p.get();
+  return _nlmixr2omega_full_omegaR(v);
+}
+
+double _nlmixr2omega_full_logDetOMGAinv5(_nlmixr2omega_full_omega *fome) {
+  double ret = 0.0;
+  for (int i = 0; i < fome->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fome->omes[i]);
+    ret += nlmixr2omega_logDetOMGAinv5(ome);
+  }
+  return ret;
+}
+
+//[[Rcpp::export]]
+double getLogDetOMGAinv5(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
+  _nlmixr2omega_full_omega* v = p.get();
+  return _nlmixr2omega_full_logDetOMGAinv5(v);
+}
+
+arma::vec _nlmixr2omega_full_tr28(_nlmixr2omega_full_omega *fome) {
+  arma::vec ret(fome->nTotTheta, arma::fill::none);
+  double *ptr = ret.memptr();
+  for (int i = 0; i < fome->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fome->omes[i]);
+    arma::vec tr28 = nlmixr2omega_tr28(ome);
+    std::copy(tr28.begin(), tr28.end(), ptr);
+    ptr += tr28.size();
+  }
+  return ret;
+}
+
+//[[Rcpp::export]]
+arma::vec nlmixr2omega_tr28(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
+  _nlmixr2omega_full_omega* v = p.get();
+  return _nlmixr2omega_full_tr28(v);
 }

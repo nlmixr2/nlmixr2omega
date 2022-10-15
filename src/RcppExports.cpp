@@ -47,6 +47,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// getCholOmegaInv
+arma::mat getCholOmegaInv(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
+RcppExport SEXP _nlmixr2omega_getCholOmegaInv(SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(getCholOmegaInv(p));
+    return rcpp_result_gen;
+END_RCPP
+}
 // getOmegaInv
 arma::mat getOmegaInv(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
 RcppExport SEXP _nlmixr2omega_getOmegaInv(SEXP pSEXP) {
@@ -55,6 +66,72 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
     rcpp_result_gen = Rcpp::wrap(getOmegaInv(p));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getdDomegaInv
+arma::mat getdDomegaInv(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
+RcppExport SEXP _nlmixr2omega_getdDomegaInv(SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(getdDomegaInv(p));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getCholOmega1
+arma::mat getCholOmega1(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
+RcppExport SEXP _nlmixr2omega_getCholOmega1(SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(getCholOmega1(p));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getOmegaR
+arma::mat getOmegaR(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
+RcppExport SEXP _nlmixr2omega_getOmegaR(SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(getOmegaR(p));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getCholOmega
+arma::mat getCholOmega(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
+RcppExport SEXP _nlmixr2omega_getCholOmega(SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(getCholOmega(p));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getLogDetOMGAinv5
+double getLogDetOMGAinv5(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
+RcppExport SEXP _nlmixr2omega_getLogDetOMGAinv5(SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(getLogDetOMGAinv5(p));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nlmixr2omega_tr28
+arma::vec nlmixr2omega_tr28(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
+RcppExport SEXP _nlmixr2omega_nlmixr2omega_tr28(SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlmixr2omega_tr28(p));
     return rcpp_result_gen;
 END_RCPP
 }

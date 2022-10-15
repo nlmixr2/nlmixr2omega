@@ -13,7 +13,35 @@ setTheta <- function(p, theta) {
     .Call(`_nlmixr2omega_setTheta`, p, theta)
 }
 
+getCholOmegaInv <- function(p) {
+    .Call(`_nlmixr2omega_getCholOmegaInv`, p)
+}
+
 getOmegaInv <- function(p) {
     .Call(`_nlmixr2omega_getOmegaInv`, p)
+}
+
+getdDomegaInv <- function(p) {
+    .Call(`_nlmixr2omega_getdDomegaInv`, p)
+}
+
+getCholOmega1 <- function(p) {
+    .Call(`_nlmixr2omega_getCholOmega1`, p)
+}
+
+getOmegaR <- function(p) {
+    .Call(`_nlmixr2omega_getOmegaR`, p)
+}
+
+getCholOmega <- function(p) {
+    .Call(`_nlmixr2omega_getCholOmega`, p)
+}
+
+getLogDetOMGAinv5 <- function(p) {
+    .Call(`_nlmixr2omega_getLogDetOMGAinv5`, p)
+}
+
+nlmixr2omega_tr28 <- function(p) {
+    .Call(`_nlmixr2omega_nlmixr2omega_tr28`, p)
 }
 
