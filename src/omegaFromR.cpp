@@ -298,3 +298,23 @@ RObject setTheta(Rcpp::XPtr<_nlmixr2omega_full_omega> p, arma::vec theta) {
   _nlmixr2omega_full_setTheta_(v, theta);  
   return R_NilValue;
 }
+
+arma::mat _nlmixr2omega_full_cholOmegaInv(_nlmixr2omega_full_omega *fome) {
+  arma::mat ret(fome->nTotDim, fome->nTotDim, arma::fill::zeros);
+  int curBlock = 0;
+  for (int i = 0; i < fome->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fome->omes[i]);
+    int curDim = ome->dim;
+    ret.submat(curBlock, curBlock,
+               curBlock+curDim, curBlock+curDim) =
+      nlmixr2omega_cholOmegaInv(ome);
+    curBlock += curDim;
+  }
+  return ret;
+}
+
+//[[Rcpp::export]]
+arma::mat getOmegaInv(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
+  _nlmixr2omega_full_omega* v = p.get();
+  return _nlmixr2omega_full_cholOmegaInv(v);
+}

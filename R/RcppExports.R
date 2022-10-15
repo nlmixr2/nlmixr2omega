@@ -13,3 +13,7 @@ setTheta <- function(p, theta) {
     .Call(`_nlmixr2omega_setTheta`, p, theta)
 }
 
+getOmegaInv <- function(p) {
+    .Call(`_nlmixr2omega_getOmegaInv`, p)
+}
+

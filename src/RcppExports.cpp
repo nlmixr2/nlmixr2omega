@@ -47,3 +47,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// getOmegaInv
+arma::mat getOmegaInv(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
+RcppExport SEXP _nlmixr2omega_getOmegaInv(SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(getOmegaInv(p));
+    return rcpp_result_gen;
+END_RCPP
+}
