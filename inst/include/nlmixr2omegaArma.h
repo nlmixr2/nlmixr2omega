@@ -48,7 +48,7 @@ public:
     
   }
   ~_nlmixr2omega_full_omega() {
-    if (omes != NULL) R_Free(omes);
+    if (omes != NULL) free(omes);
   }
   _nlmixr2omega_ind_omega *omes = NULL;
   int nomes = 0;

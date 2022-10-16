@@ -9,6 +9,7 @@
 #include <time.h>
 #include <Rmath.h>
 #include <RcppArmadillo.h>
+#include <stdlib.h>
 
 using namespace arma;
 using namespace Rcpp;
@@ -96,12 +97,6 @@ arma::mat nlmixr2omega_dDomegaInv(_nlmixr2omega_ind_omega *ome) {
 
 
 arma::mat rxToCholOmega(arma::mat cholMat){
-  // Only the cholesky is needed for the liklihood calculation
-  // trimatu is faster, but it seems to have problems sometimes with certain BLAS combinations:
-  // See https://github.com/nlmixrdevelopment/rxode2/issues/84
-  // Only the cholesky is needed for the liklihood calculation
-  // trimatu is faster, but it seems to have problems sometimes with certain BLAS combinations:
-  // See https://github.com/nlmixrdevelopment/rxode2/issues/84
   arma::mat cholO;
   bool success;
   try {
@@ -226,35 +221,8 @@ void nlmixr2omega_iniOmeStruct(_nlmixr2omega_ind_omega *ome,
     ome->cFun = _nlmixr2omega_mat;
     break;
   }
-  // sum_{k=1}^{n} k = n*(n+1)/2
-  arma::vec theta(0.5 * in.n_rows * (in.n_rows + 1.0));
-  int j = 0;
-  for (unsigned int j = 0; j < in.n_rows; ++j) {
-    for (unsigned int i = j; i < in.n_rows; ++i) {
-      theta(j)  = in(i, j);
-    }
-  }
+  arma::vec theta = in(trimatu_ind(size(in)));
   _nlmixr2omegaAssignTheta(ome, theta);
-}
-
-//[[Rcpp::export]]
-Rcpp::XPtr<_nlmixr2omega_full_omega> nlmixr2omegaNew(List omeList, int diagXform) {
-  _nlmixr2omega_full_omega full;
-  _nlmixr2omega_full_omega *fullPtr = &full;
-  fullPtr->nomes = omeList.size();
-  if (fullPtr->omes != NULL) R_Free(fullPtr->omes);
-  fullPtr->omes = R_Calloc(fullPtr->nomes,_nlmixr2omega_ind_omega);
-  fullPtr->nTotTheta = 0;
-  fullPtr->nTotDim = 0;
-  for (int i = 0; i < fullPtr->nomes; ++i) {
-    _nlmixr2omega_ind_omega *ome = &(fullPtr->omes[i]);
-    arma::mat cur = as<arma::mat>(omeList[i]);
-    nlmixr2omega_iniOmeStruct(ome, cur, diagXform);
-    fullPtr->nTotTheta += ome->theta.size();
-    fullPtr->nTotDim += ome->dim;
-  }
-  Rcpp::XPtr<_nlmixr2omega_full_omega> ptr(fullPtr);
-  return ptr;
 }
 
 arma::vec _nlmixr2omega_full_getTheta_(_nlmixr2omega_full_omega *fome) {
@@ -270,6 +238,66 @@ arma::vec _nlmixr2omega_full_getTheta_(_nlmixr2omega_full_omega *fome) {
     }
     return theta;
   }
+}
+
+
+//[[Rcpp::export]]
+arma::vec nlmixr2omegaNew(List omeList, int diagXform) {
+  _nlmixr2omega_full_omega full;
+  _nlmixr2omega_full_omega *fullPtr = &full;
+  fullPtr->nomes = omeList.size();
+  if (fullPtr->omes != NULL) free(fullPtr->omes);
+  fullPtr->omes = (_nlmixr2omega_ind_omega*)malloc(fullPtr->nomes*sizeof(_nlmixr2omega_ind_omega));
+  fullPtr->nTotTheta = 0;
+  fullPtr->nTotDim = 0;
+  for (int i = 0; i < fullPtr->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fullPtr->omes[i]);
+    arma::mat cur = as<arma::mat>(omeList[i]);
+    nlmixr2omega_iniOmeStruct(ome, cur, diagXform);
+    fullPtr->nTotTheta += ome->theta.size();
+    fullPtr->nTotDim += ome->dim;
+  }
+  arma::vec ret(4);
+  ret[0] = fullPtr->nomes;
+  ret[1] = fullPtr->nTotTheta;
+  ret[2] = fullPtr->nTotDim;
+  ret[3] = diagXform;
+  for (int i = 0; i < fullPtr->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fullPtr->omes[i]);
+    arma::vec n(1);
+    n[0] = ome->dim;
+    ret= join_cols(ret, n);
+  }
+  free(fullPtr->omes);
+  fullPtr->omes = NULL;
+  arma::vec theta = _nlmixr2omega_full_getTheta_(fullPtr);
+  return join_cols(ret, theta);
+}
+
+_nlmixr2omega_full_omega nlmixr2omega_full_Create(arma::vec in) {
+  _nlmixr2omega_full_omega full;
+  _nlmixr2omega_full_omega *fullPtr = &full;
+  double *ptr = in.memptr();
+  fullPtr->nomes = (int)(in[0]);
+  fullPtr->nTotTheta = (int)(in[1]);
+  fullPtr->nTotDim = (int)(in[2]);
+  int diagXform = (int)(in[3]);
+  ptr += 4;
+  fullPtr->omes = (_nlmixr2omega_ind_omega*)malloc(fullPtr->nomes*sizeof(_nlmixr2omega_ind_omega));
+  for (int i = 0; i < fullPtr->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fullPtr->omes[i]);
+    ome->dim = ptr[0];
+    ptr++;
+  }
+  for (int i = 0; i < fullPtr->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fullPtr->omes[i]);
+    int ntheta = 0.5*(ome->dim)*(ome->dim+1.0);
+    arma::vec theta(ntheta);
+    std::copy(ptr, ptr+ntheta, theta.begin());
+    ptr += ntheta;
+    _nlmixr2omegaAssignTheta(ome, theta);
+  }
+  return full;
 }
 
 //[[Rcpp::export]]

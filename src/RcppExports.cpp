@@ -13,7 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // nlmixr2omegaNew
-Rcpp::XPtr<_nlmixr2omega_full_omega> nlmixr2omegaNew(List omeList, int diagXform);
+arma::vec nlmixr2omegaNew(List omeList, int diagXform);
 RcppExport SEXP _nlmixr2omega_nlmixr2omegaNew(SEXP omeListSEXP, SEXP diagXformSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
