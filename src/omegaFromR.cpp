@@ -268,9 +268,10 @@ arma::vec nlmixr2omegaNew(List omeList, int diagXform) {
     n[0] = ome->dim;
     ret= join_cols(ret, n);
   }
+  arma::vec theta = _nlmixr2omega_full_getTheta_(fullPtr);
   free(fullPtr->omes);
   fullPtr->omes = NULL;
-  arma::vec theta = _nlmixr2omega_full_getTheta_(fullPtr);
+  //arma::vec theta = _nlmixr2omega_full_getTheta_(fullPtr);
   return join_cols(ret, theta);
 }
 
@@ -301,7 +302,8 @@ _nlmixr2omega_full_omega nlmixr2omega_full_Create(arma::vec in) {
 }
 
 //[[Rcpp::export]]
-arma::vec getTheta(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
+arma::vec getTheta(arma::vec in) {
+  _nlmixr2omega_full_omega p = nlmixr2omega_full_Create(in)
   _nlmixr2omega_full_omega* v = p.get();
   return  _nlmixr2omega_full_getTheta_(v);
 }
