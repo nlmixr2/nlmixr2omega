@@ -267,6 +267,14 @@ nlmixr2omega <- function(mat, diag.xform = c("sqrt", "log", "identity")) {
   .ret
 }
 
+.getTheta <- function(var) {
+  as.vector(.Call(`_nlmixr2omega_getTheta`, var))
+}
+
+.setTheta <- function(var, theta) {
+  .Call(`_nlmixr2omega_setTheta`, var, theta)
+}
+
 # .ntheta
 # .xType
 # .omega

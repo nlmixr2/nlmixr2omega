@@ -241,22 +241,7 @@ arma::vec _nlmixr2omega_full_getTheta_(_nlmixr2omega_full_omega *fome) {
 }
 
 
-//[[Rcpp::export]]
-arma::vec nlmixr2omegaNew(List omeList, int diagXform) {
-  _nlmixr2omega_full_omega full;
-  _nlmixr2omega_full_omega *fullPtr = &full;
-  fullPtr->nomes = omeList.size();
-  if (fullPtr->omes != NULL) free(fullPtr->omes);
-  fullPtr->omes = (_nlmixr2omega_ind_omega*)malloc(fullPtr->nomes*sizeof(_nlmixr2omega_ind_omega));
-  fullPtr->nTotTheta = 0;
-  fullPtr->nTotDim = 0;
-  for (int i = 0; i < fullPtr->nomes; ++i) {
-    _nlmixr2omega_ind_omega *ome = &(fullPtr->omes[i]);
-    arma::mat cur = as<arma::mat>(omeList[i]);
-    nlmixr2omega_iniOmeStruct(ome, cur, diagXform);
-    fullPtr->nTotTheta += ome->theta.size();
-    fullPtr->nTotDim += ome->dim;
-  }
+arma::vec nlmixr2omegaNewVec(_nlmixr2omega_full_omega *fullPtr, int diagXform) {
   arma::vec ret(4);
   ret[0] = fullPtr->nomes;
   ret[1] = fullPtr->nTotTheta;
@@ -273,6 +258,25 @@ arma::vec nlmixr2omegaNew(List omeList, int diagXform) {
   fullPtr->omes = NULL;
   //arma::vec theta = _nlmixr2omega_full_getTheta_(fullPtr);
   return join_cols(ret, theta);
+}
+
+//[[Rcpp::export]]
+arma::vec nlmixr2omegaNew(List omeList, int diagXform) {
+  _nlmixr2omega_full_omega full;
+  _nlmixr2omega_full_omega *fullPtr = &full;
+  fullPtr->nomes = omeList.size();
+  if (fullPtr->omes != NULL) free(fullPtr->omes);
+  fullPtr->omes = (_nlmixr2omega_ind_omega*)malloc(fullPtr->nomes*sizeof(_nlmixr2omega_ind_omega));
+  fullPtr->nTotTheta = 0;
+  fullPtr->nTotDim = 0;
+  for (int i = 0; i < fullPtr->nomes; ++i) {
+    _nlmixr2omega_ind_omega *ome = &(fullPtr->omes[i]);
+    arma::mat cur = as<arma::mat>(omeList[i]);
+    nlmixr2omega_iniOmeStruct(ome, cur, diagXform);
+    fullPtr->nTotTheta += ome->theta.size();
+    fullPtr->nTotDim += ome->dim;
+  }
+  return nlmixr2omegaNewVec(fullPtr, diagXform);
 }
 
 _nlmixr2omega_full_omega nlmixr2omega_full_Create(arma::vec in) {
@@ -301,11 +305,29 @@ _nlmixr2omega_full_omega nlmixr2omega_full_Create(arma::vec in) {
   return full;
 }
 
+_nlmixr2omega_full_omega omegaFromRgetFullOmegaFromSexp(SEXP inSEXP) {
+  if (!Rf_inherits(inSEXP, "nlmixr2omega")) {
+    stop("needs to be class 'nlmixr2omega'");
+  }
+  arma::vec in = as<arma::vec>(PROTECT(VECTOR_ELT(inSEXP, 0)));
+  UNPROTECT(1);
+  return nlmixr2omega_full_Create(in);
+}
+
+int omegaFromRgetDiagXfrom(SEXP inSEXP) {
+  if (!Rf_inherits(inSEXP, "nlmixr2omega")) {
+    stop("needs to be class 'nlmixr2omega'");
+  }
+  arma::vec in = as<arma::vec>(PROTECT(VECTOR_ELT(inSEXP, 0)));
+  UNPROTECT(1);
+  return (int)(in[3]);
+}
+
+
 //[[Rcpp::export]]
-arma::vec getTheta(arma::vec in) {
-  _nlmixr2omega_full_omega p = nlmixr2omega_full_Create(in)
-  _nlmixr2omega_full_omega* v = p.get();
-  return  _nlmixr2omega_full_getTheta_(v);
+NumericVector getTheta(SEXP inSEXP) {
+  _nlmixr2omega_full_omega p = omegaFromRgetFullOmegaFromSexp(inSEXP);
+  return wrap(_nlmixr2omega_full_getTheta_(&p));
 }
 
 void _nlmixr2omega_full_setTheta_(_nlmixr2omega_full_omega *fome,
@@ -323,10 +345,13 @@ void _nlmixr2omega_full_setTheta_(_nlmixr2omega_full_omega *fome,
 }
 
 //[[Rcpp::export]]
-RObject setTheta(Rcpp::XPtr<_nlmixr2omega_full_omega> p, arma::vec theta) {
-  _nlmixr2omega_full_omega* v = p.get();
-  _nlmixr2omega_full_setTheta_(v, theta);  
-  return R_NilValue;
+RObject setTheta(SEXP inSEXP, arma::vec theta) {
+  _nlmixr2omega_full_omega p = omegaFromRgetFullOmegaFromSexp(inSEXP);
+  _nlmixr2omega_full_setTheta_(&p, theta);
+  List ret = List::create(nlmixr2omegaNewVec(&p, omegaFromRgetDiagXfrom(inSEXP)),
+                          VECTOR_ELT(inSEXP, 1));
+  ret.attr("class") = "nlmixr2omega";
+  return ret;
 }
 
 arma::mat _nlmixr2omega_full_cholOmegaInv(_nlmixr2omega_full_omega *fome) {

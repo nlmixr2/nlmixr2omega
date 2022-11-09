@@ -5,12 +5,12 @@ nlmixr2omegaNew <- function(omeList, diagXform) {
     .Call(`_nlmixr2omega_nlmixr2omegaNew`, omeList, diagXform)
 }
 
-getTheta <- function(p) {
-    .Call(`_nlmixr2omega_getTheta`, p)
+getTheta <- function(inSEXP) {
+    .Call(`_nlmixr2omega_getTheta`, inSEXP)
 }
 
-setTheta <- function(p, theta) {
-    .Call(`_nlmixr2omega_setTheta`, p, theta)
+setTheta <- function(inSEXP, theta) {
+    .Call(`_nlmixr2omega_setTheta`, inSEXP, theta)
 }
 
 getCholOmegaInv <- function(p) {
