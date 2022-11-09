@@ -92,13 +92,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // getOmegaR
-arma::mat getOmegaR(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
-RcppExport SEXP _nlmixr2omega_getOmegaR(SEXP pSEXP) {
+RObject getOmegaR(SEXP inSEXP);
+RcppExport SEXP _nlmixr2omega_getOmegaR(SEXP inSEXPSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(getOmegaR(p));
+    Rcpp::traits::input_parameter< SEXP >::type inSEXP(inSEXPSEXP);
+    rcpp_result_gen = Rcpp::wrap(getOmegaR(inSEXP));
     return rcpp_result_gen;
 END_RCPP
 }

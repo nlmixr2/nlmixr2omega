@@ -29,8 +29,8 @@ getCholOmega1 <- function(p) {
     .Call(`_nlmixr2omega_getCholOmega1`, p)
 }
 
-getOmegaR <- function(p) {
-    .Call(`_nlmixr2omega_getOmegaR`, p)
+getOmegaR <- function(inSEXP) {
+    .Call(`_nlmixr2omega_getOmegaR`, inSEXP)
 }
 
 getCholOmega <- function(p) {

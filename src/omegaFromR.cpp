@@ -291,6 +291,16 @@ _nlmixr2omega_full_omega nlmixr2omega_full_Create(arma::vec in) {
   fullPtr->omes = (_nlmixr2omega_ind_omega*)malloc(fullPtr->nomes*sizeof(_nlmixr2omega_ind_omega));
   for (int i = 0; i < fullPtr->nomes; ++i) {
     _nlmixr2omega_ind_omega *ome = &(fullPtr->omes[i]);
+    switch (diagXform) {
+    case nlmixr2omega_sqrt:
+      ome->cFun = _nlmixr2omega_mat_sqrt;
+      break;
+    case nlmixr2omega_log:
+      ome->cFun = _nlmixr2omega_mat_log;
+    default:
+      ome->cFun = _nlmixr2omega_mat;
+      break;
+    }
     ome->dim = ptr[0];
     ptr++;
   }
@@ -440,18 +450,21 @@ arma::mat _nlmixr2omega_full_omegaR(_nlmixr2omega_full_omega *fome) {
   for (int i = 0; i < fome->nomes; ++i) {
     _nlmixr2omega_ind_omega *ome = &(fome->omes[i]);
     int curDim = ome->dim;
+    arma::mat cur = nlmixr2omega_omega(ome);
     ret.submat(curBlock, curBlock,
-               curBlock+curDim, curBlock+curDim) =
-      nlmixr2omega_omega(ome);
+               curBlock+curDim-1, curBlock+curDim-1) = cur;
     curBlock += curDim;
   }
   return ret;
 }
 
 //[[Rcpp::export]]
-arma::mat getOmegaR(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
-  _nlmixr2omega_full_omega* v = p.get();
-  return _nlmixr2omega_full_omegaR(v);
+RObject getOmegaR(SEXP inSEXP) {
+  _nlmixr2omega_full_omega p = omegaFromRgetFullOmegaFromSexp(inSEXP);
+  NumericMatrix ret = wrap(_nlmixr2omega_full_omegaR(&p));
+  ret.attr("dimnames") = PROTECT(VECTOR_ELT(inSEXP, 1));
+  UNPROTECT(1);
+  return ret;
 }
 
 arma::mat _nlmixr2omega_full_cholOmega(_nlmixr2omega_full_omega *fome) {

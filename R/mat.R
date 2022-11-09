@@ -280,9 +280,5 @@ nlmixr2omega <- function(mat, diag.xform = c("sqrt", "log", "identity")) {
 # .omega
 
 .getOmega <- function(x) {
-  if (!inherits(x, "nlmixr2omega")) stop("not a 'nlmixr2omega' object")
-  .ptr <- x[[1]]
-  .ome <- .Call(`_nlmixr2omega_getOmegaR`, .ptr)
-  dimnames(.ome) <- x[[2]]
-  .ome
+  .Call(`_nlmixr2omega_getOmegaR`, x)
 }
