@@ -275,10 +275,10 @@ nlmixr2omega <- function(mat, diag.xform = c("sqrt", "log", "identity")) {
   .Call(`_nlmixr2omega_setTheta`, var, theta)
 }
 
-# .ntheta
-# .xType
-# .omega
-
 .getOmega <- function(x) {
   .Call(`_nlmixr2omega_getOmegaR`, x)
+}
+
+.getCholOmegaInv <- function(x) {
+.Call(`_nlmixr2omega_getCholOmegaInv`, x)
 }

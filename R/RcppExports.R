@@ -13,8 +13,8 @@ setTheta <- function(inSEXP, theta) {
     .Call(`_nlmixr2omega_setTheta`, inSEXP, theta)
 }
 
-getCholOmegaInv <- function(p) {
-    .Call(`_nlmixr2omega_getCholOmegaInv`, p)
+getCholOmegaInv <- function(inSEXP) {
+    .Call(`_nlmixr2omega_getCholOmegaInv`, inSEXP)
 }
 
 getOmegaInv <- function(p) {
