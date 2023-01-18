@@ -114,13 +114,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // getLogDetOMGAinv5
-double getLogDetOMGAinv5(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
-RcppExport SEXP _nlmixr2omega_getLogDetOMGAinv5(SEXP pSEXP) {
+double getLogDetOMGAinv5(RObject inSEXP);
+RcppExport SEXP _nlmixr2omega_getLogDetOMGAinv5(SEXP inSEXPSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(getLogDetOMGAinv5(p));
+    Rcpp::traits::input_parameter< RObject >::type inSEXP(inSEXPSEXP);
+    rcpp_result_gen = Rcpp::wrap(getLogDetOMGAinv5(inSEXP));
     return rcpp_result_gen;
 END_RCPP
 }

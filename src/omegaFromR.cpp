@@ -524,9 +524,9 @@ double _nlmixr2omega_full_logDetOMGAinv5(_nlmixr2omega_full_omega *fome) {
 }
 
 //[[Rcpp::export]]
-double getLogDetOMGAinv5(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
-  _nlmixr2omega_full_omega* v = p.get();
-  return _nlmixr2omega_full_logDetOMGAinv5(v);
+double getLogDetOMGAinv5(RObject inSEXP) {
+  _nlmixr2omega_full_omega p = omegaFromRgetFullOmegaFromSexp(inSEXP);
+  return _nlmixr2omega_full_logDetOMGAinv5(&p);
 }
 
 arma::vec _nlmixr2omega_full_tr28(_nlmixr2omega_full_omega *fome) {
