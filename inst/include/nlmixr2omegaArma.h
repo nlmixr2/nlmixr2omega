@@ -56,7 +56,6 @@ public:
   int nTotDim = 0;
 };
 
-
 #define nlmixr2omega_sqrt 1
 #define nlmixr2omega_log 2
 

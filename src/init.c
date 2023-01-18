@@ -15,6 +15,7 @@ SEXP _nlmixr2omega_nlmixr2omegaNew(SEXP omeListSEXP, SEXP diagXformSEXP);
 SEXP _nlmixr2omega_getTheta(SEXP pSEXP);
 SEXP _nlmixr2omega_setTheta(SEXP pSEXP, SEXP thetaSEXP);
 SEXP _nlmixr2omega_getCholOmegaInv(SEXP pSEXP);
+SEXP _nlmixr2omega_getCholOmega1(SEXP pSEXP);
 SEXP _nlmixr2omega_getOmegaInv(SEXP pSEXP);
 SEXP _nlmixr2omega_getdDomegaInv(SEXP pSEXP);
 SEXP _nlmixr2omega_getCholOmega1(SEXP);
@@ -29,6 +30,7 @@ void R_init_nlmixr2omega(DllInfo *info){
     {"_nlmixr2omega_nlmixr2omegaNew", (DL_FUNC) &_nlmixr2omega_nlmixr2omegaNew, 2},
     {"_nlmixr2omega_getTheta", (DL_FUNC) &_nlmixr2omega_getTheta, 1},
     {"_nlmixr2omega_setTheta", (DL_FUNC) &_nlmixr2omega_setTheta, 2},
+    {"_nlmixr2omega_getCholOmega1", (DL_FUNC) &_nlmixr2omega_getCholOmega1, 1},
     {"_nlmixr2omega_getCholOmegaInv",
      (DL_FUNC) &_nlmixr2omega_getCholOmegaInv, 1},
     {"_nlmixr2omega_getOmegaInv",

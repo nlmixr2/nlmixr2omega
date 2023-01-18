@@ -25,79 +25,79 @@ BEGIN_RCPP
 END_RCPP
 }
 // getTheta
-NumericVector getTheta(SEXP inSEXP);
+NumericVector getTheta(RObject inSEXP);
 RcppExport SEXP _nlmixr2omega_getTheta(SEXP inSEXPSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type inSEXP(inSEXPSEXP);
+    Rcpp::traits::input_parameter< RObject >::type inSEXP(inSEXPSEXP);
     rcpp_result_gen = Rcpp::wrap(getTheta(inSEXP));
     return rcpp_result_gen;
 END_RCPP
 }
 // setTheta
-RObject setTheta(SEXP inSEXP, arma::vec theta);
+RObject setTheta(RObject inSEXP, arma::vec theta);
 RcppExport SEXP _nlmixr2omega_setTheta(SEXP inSEXPSEXP, SEXP thetaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type inSEXP(inSEXPSEXP);
+    Rcpp::traits::input_parameter< RObject >::type inSEXP(inSEXPSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type theta(thetaSEXP);
     rcpp_result_gen = Rcpp::wrap(setTheta(inSEXP, theta));
     return rcpp_result_gen;
 END_RCPP
 }
 // getCholOmegaInv
-RObject getCholOmegaInv(SEXP inSEXP);
+RObject getCholOmegaInv(RObject inSEXP);
 RcppExport SEXP _nlmixr2omega_getCholOmegaInv(SEXP inSEXPSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type inSEXP(inSEXPSEXP);
+    Rcpp::traits::input_parameter< RObject >::type inSEXP(inSEXPSEXP);
     rcpp_result_gen = Rcpp::wrap(getCholOmegaInv(inSEXP));
     return rcpp_result_gen;
 END_RCPP
 }
 // getOmegaInv
-RObject getOmegaInv(SEXP inSEXP);
+RObject getOmegaInv(RObject inSEXP);
 RcppExport SEXP _nlmixr2omega_getOmegaInv(SEXP inSEXPSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type inSEXP(inSEXPSEXP);
+    Rcpp::traits::input_parameter< RObject >::type inSEXP(inSEXPSEXP);
     rcpp_result_gen = Rcpp::wrap(getOmegaInv(inSEXP));
     return rcpp_result_gen;
 END_RCPP
 }
 // getdDomegaInv
-arma::mat getdDomegaInv(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
-RcppExport SEXP _nlmixr2omega_getdDomegaInv(SEXP pSEXP) {
+RObject getdDomegaInv(RObject inSEXP);
+RcppExport SEXP _nlmixr2omega_getdDomegaInv(SEXP inSEXPSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(getdDomegaInv(p));
+    Rcpp::traits::input_parameter< RObject >::type inSEXP(inSEXPSEXP);
+    rcpp_result_gen = Rcpp::wrap(getdDomegaInv(inSEXP));
     return rcpp_result_gen;
 END_RCPP
 }
 // getCholOmega1
-arma::mat getCholOmega1(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
-RcppExport SEXP _nlmixr2omega_getCholOmega1(SEXP pSEXP) {
+RObject getCholOmega1(RObject inSEXP);
+RcppExport SEXP _nlmixr2omega_getCholOmega1(SEXP inSEXPSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(getCholOmega1(p));
+    Rcpp::traits::input_parameter< RObject >::type inSEXP(inSEXPSEXP);
+    rcpp_result_gen = Rcpp::wrap(getCholOmega1(inSEXP));
     return rcpp_result_gen;
 END_RCPP
 }
 // getOmegaR
-RObject getOmegaR(SEXP inSEXP);
+RObject getOmegaR(RObject inSEXP);
 RcppExport SEXP _nlmixr2omega_getOmegaR(SEXP inSEXPSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type inSEXP(inSEXPSEXP);
+    Rcpp::traits::input_parameter< RObject >::type inSEXP(inSEXPSEXP);
     rcpp_result_gen = Rcpp::wrap(getOmegaR(inSEXP));
     return rcpp_result_gen;
 END_RCPP

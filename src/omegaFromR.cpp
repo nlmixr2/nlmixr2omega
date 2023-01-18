@@ -27,7 +27,8 @@ using namespace Rcpp;
 #endif
 
 void _nlmixr2omegaAssignTheta(_nlmixr2omega_ind_omega *ome, arma::vec theta) {
-  ome->theta = theta;
+  arma::vec cur = theta;
+  ome->theta = cur;
   // sum_{k=1}^{n} k = n*(n+1)/2
   int d0 = theta.size();
   ome->dim = 0.5*sqrt(1.0 + d0 * 8.0) - 0.5;
@@ -45,7 +46,7 @@ void _nlmixr2omegaAssignTheta(_nlmixr2omega_ind_omega *ome, arma::vec theta) {
 }
 
 arma::mat nlmixr2omega_cholOmegaInv(_nlmixr2omega_ind_omega *ome) {
-  if (ome->cholOmegaInvBool) return ome->cholOmegaInvMat;
+  if (ome->cholOmegaInvBool && ome->cholOmegaInvMat.n_elem != 0) return ome->cholOmegaInvMat;
   int ts = ome->theta.size();
   int tn  = 0;
   arma::mat ret(ome->dim, ome->dim, arma::fill::zeros);
@@ -56,7 +57,7 @@ arma::mat nlmixr2omega_cholOmegaInv(_nlmixr2omega_ind_omega *ome) {
 }
 
 arma::mat nlmixr2omega_omegaInv(_nlmixr2omega_ind_omega *ome) {
-  if (ome->omegaInvBool) return ome->omegaInvMat;
+  if (ome->omegaInvBool && ome->omegaInvMat.n_elem != 0) return ome->omegaInvMat;
   int ts = ome->theta.size();
   int tn  = -1;
   arma::mat ret(ome->dim, ome->dim, arma::fill::zeros);
@@ -67,7 +68,7 @@ arma::mat nlmixr2omega_omegaInv(_nlmixr2omega_ind_omega *ome) {
 }
 
 arma::cube nlmixr2omega_dOmegaInv(_nlmixr2omega_ind_omega *ome) {
-  if (ome->dDomegaInvBool) return ome->dOmegaInvCube;
+  if (ome->dDomegaInvBool && ome->dOmegaInvCube.n_elem != 0) return ome->dOmegaInvCube;
   int ts = ome->theta.size();
   arma::cube ret(ome->dim, ome->dim, ts, arma::fill::zeros);
   int tn;
@@ -81,7 +82,7 @@ arma::cube nlmixr2omega_dOmegaInv(_nlmixr2omega_ind_omega *ome) {
 }
 
 arma::mat nlmixr2omega_dDomegaInv(_nlmixr2omega_ind_omega *ome) {
-  if (ome->dDomegaInvBool) return (ome->dDomegaInvMat);
+  if (ome->dDomegaInvBool && ome->dDomegaInvMat.n_elem != 0) return (ome->dDomegaInvMat);
   int ts = ome->theta.size();
   // dim  x ntheta ; "d.D.omegaInv"
   arma::mat ret(ome->dim, ts, arma::fill::zeros);
@@ -115,7 +116,7 @@ arma::mat rxToCholOmega(arma::mat cholMat){
 }
 
 arma::mat nlmixr2omega_cholOmega1(_nlmixr2omega_ind_omega *ome) {
-  if (ome->cholOmega1Bool) return ome->cholOmega1Mat;
+  if (ome->cholOmega1Bool && ome->cholOmega1Mat.n_elem != 0) return ome->cholOmega1Mat;
   arma::mat coi =  nlmixr2omega_cholOmegaInv(ome);
   coi = rxToCholOmega(coi);
   ome->cholOmega1Bool = true;
@@ -124,7 +125,7 @@ arma::mat nlmixr2omega_cholOmega1(_nlmixr2omega_ind_omega *ome) {
 }
 
 arma::mat nlmixr2omega_omega(_nlmixr2omega_ind_omega *ome) {
-  if (ome->omegaBool) return ome->omegaMat;
+  if (ome->omegaBool && ome->omegaMat.n_elem != 0) return ome->omegaMat;
   arma::mat u1 = nlmixr2omega_cholOmega1(ome);
   arma::mat omega = u1*trans(u1);
   ome->omegaBool = true;
@@ -291,6 +292,16 @@ _nlmixr2omega_full_omega nlmixr2omega_full_Create(arma::vec in) {
   fullPtr->omes = (_nlmixr2omega_ind_omega*)malloc(fullPtr->nomes*sizeof(_nlmixr2omega_ind_omega));
   for (int i = 0; i < fullPtr->nomes; ++i) {
     _nlmixr2omega_ind_omega *ome = &(fullPtr->omes[i]);
+    ome->cholOmegaInvBool = false;
+    ome->omegaInvBool = false;
+    ome->dOmegaInvBool = false;
+    ome->dDomegaInvBool = false;
+    ome->cholOmega1Bool = false;
+    ome->omegaBool = false;
+    ome->cholOmegaBool = false;
+    ome->logDetOMGAinv5Bool=false;
+    ome->tr28Bool = false;
+    ome->omega47Bool = false;
     switch (diagXform) {
     case nlmixr2omega_sqrt:
       ome->cFun = _nlmixr2omega_mat_sqrt;
@@ -315,27 +326,27 @@ _nlmixr2omega_full_omega nlmixr2omega_full_Create(arma::vec in) {
   return full;
 }
 
-_nlmixr2omega_full_omega omegaFromRgetFullOmegaFromSexp(SEXP inSEXP) {
+_nlmixr2omega_full_omega omegaFromRgetFullOmegaFromSexp(RObject inSEXP) {
   if (!Rf_inherits(inSEXP, "nlmixr2omega")) {
     stop("needs to be class 'nlmixr2omega'");
   }
-  arma::vec in = as<arma::vec>(PROTECT(VECTOR_ELT(inSEXP, 0)));
-  UNPROTECT(1);
+  List cur = as<List>(inSEXP);
+  arma::vec in = as<arma::vec>(cur[0]);
   return nlmixr2omega_full_Create(in);
 }
 
-int omegaFromRgetDiagXfrom(SEXP inSEXP) {
+int omegaFromRgetDiagXfrom(RObject inSEXP) {
   if (!Rf_inherits(inSEXP, "nlmixr2omega")) {
     stop("needs to be class 'nlmixr2omega'");
   }
-  arma::vec in = as<arma::vec>(PROTECT(VECTOR_ELT(inSEXP, 0)));
-  UNPROTECT(1);
+  List cur = as<List>(inSEXP);
+  arma::vec in = as<arma::vec>(cur[0]);
   return (int)(in[3]);
 }
 
 
 //[[Rcpp::export]]
-NumericVector getTheta(SEXP inSEXP) {
+NumericVector getTheta(RObject inSEXP) {
   _nlmixr2omega_full_omega p = omegaFromRgetFullOmegaFromSexp(inSEXP);
   return wrap(_nlmixr2omega_full_getTheta_(&p));
 }
@@ -355,7 +366,7 @@ void _nlmixr2omega_full_setTheta_(_nlmixr2omega_full_omega *fome,
 }
 
 //[[Rcpp::export]]
-RObject setTheta(SEXP inSEXP, arma::vec theta) {
+RObject setTheta(RObject inSEXP, arma::vec theta) {
   _nlmixr2omega_full_omega p = omegaFromRgetFullOmegaFromSexp(inSEXP);
   _nlmixr2omega_full_setTheta_(&p, theta);
   List ret = List::create(nlmixr2omegaNewVec(&p, omegaFromRgetDiagXfrom(inSEXP)),
@@ -379,11 +390,11 @@ arma::mat _nlmixr2omega_full_cholOmegaInv(_nlmixr2omega_full_omega *fome) {
 }
 
 //[[Rcpp::export]]
-RObject getCholOmegaInv(SEXP inSEXP) {
+RObject getCholOmegaInv(RObject inSEXP) {
   _nlmixr2omega_full_omega p = omegaFromRgetFullOmegaFromSexp(inSEXP);
   NumericMatrix ret = wrap(_nlmixr2omega_full_cholOmegaInv(&p));
-  ret.attr("dimnames") = PROTECT(VECTOR_ELT(inSEXP, 1));
-  UNPROTECT(1);
+  List v = as<List>(inSEXP);
+  ret.attr("dimnames") = v[1];
   return ret;
 }
 
@@ -402,11 +413,11 @@ arma::mat _nlmixr2omega_full_omegaInv(_nlmixr2omega_full_omega *fome) {
 }
 
 //[[Rcpp::export]]
-RObject getOmegaInv(SEXP inSEXP) {
+RObject getOmegaInv(RObject inSEXP) {
   _nlmixr2omega_full_omega p = omegaFromRgetFullOmegaFromSexp(inSEXP);
   NumericMatrix ret = wrap(_nlmixr2omega_full_omegaInv(&p));
-  ret.attr("dimnames") = PROTECT(VECTOR_ELT(inSEXP, 1));
-  UNPROTECT(1);
+  List v = as<List>(inSEXP);
+  ret.attr("dimnames") = v[1];
   return ret;
 }
 
@@ -417,17 +428,21 @@ arma::mat _nlmixr2omega_full_dDomegaInv(_nlmixr2omega_full_omega *fome) {
     _nlmixr2omega_ind_omega *ome = &(fome->omes[i]);
     int curDim = ome->dim;
     ret.submat(curBlock, curBlock,
-               curBlock+curDim, curBlock+curDim) =
+               curBlock+curDim-1, curBlock+curDim-1) =
       nlmixr2omega_dDomegaInv(ome);
     curBlock += curDim;
   }
+  print(wrap(ret));
   return ret;
 }
 
 //[[Rcpp::export]]
-arma::mat getdDomegaInv(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
-  _nlmixr2omega_full_omega* v = p.get();
-  return _nlmixr2omega_full_dDomegaInv(v);
+RObject getdDomegaInv(RObject inSEXP) {
+  _nlmixr2omega_full_omega p = omegaFromRgetFullOmegaFromSexp(inSEXP);
+  RObject ret = wrap(_nlmixr2omega_full_dDomegaInv(&p));
+  //ret.attr("dimnames") = PROTECT(VECTOR_ELT(inSEXP, 1));
+  //UNPROTECT(1);
+  return ret;
 }
 
 arma::mat _nlmixr2omega_full_cholOmega1(_nlmixr2omega_full_omega *fome) {
@@ -437,7 +452,7 @@ arma::mat _nlmixr2omega_full_cholOmega1(_nlmixr2omega_full_omega *fome) {
     _nlmixr2omega_ind_omega *ome = &(fome->omes[i]);
     int curDim = ome->dim;
     ret.submat(curBlock, curBlock,
-               curBlock+curDim, curBlock+curDim) =
+               curBlock+curDim-1, curBlock+curDim-1) =
       nlmixr2omega_cholOmega1(ome);
     curBlock += curDim;
   }
@@ -445,9 +460,12 @@ arma::mat _nlmixr2omega_full_cholOmega1(_nlmixr2omega_full_omega *fome) {
 }
 
 //[[Rcpp::export]]
-arma::mat getCholOmega1(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
-  _nlmixr2omega_full_omega* v = p.get();
-  return _nlmixr2omega_full_cholOmega1(v);
+RObject getCholOmega1(RObject inSEXP) {
+  _nlmixr2omega_full_omega p = omegaFromRgetFullOmegaFromSexp(inSEXP);
+  RObject ret = wrap(_nlmixr2omega_full_cholOmega1(&p));
+  List v = as<List>(inSEXP);
+  ret.attr("dimnames") = v[1];
+  return ret;
 }
 
 arma::mat _nlmixr2omega_full_omegaR(_nlmixr2omega_full_omega *fome) {
@@ -465,11 +483,11 @@ arma::mat _nlmixr2omega_full_omegaR(_nlmixr2omega_full_omega *fome) {
 }
 
 //[[Rcpp::export]]
-RObject getOmegaR(SEXP inSEXP) {
+RObject getOmegaR(RObject inSEXP) {
   _nlmixr2omega_full_omega p = omegaFromRgetFullOmegaFromSexp(inSEXP);
   NumericMatrix ret = wrap(_nlmixr2omega_full_omegaR(&p));
-  ret.attr("dimnames") = PROTECT(VECTOR_ELT(inSEXP, 1));
-  UNPROTECT(1);
+  List v = as<List>(inSEXP);
+  ret.attr("dimnames") = v[1];
   return ret;
 }
 

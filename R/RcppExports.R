@@ -21,12 +21,12 @@ getOmegaInv <- function(inSEXP) {
     .Call(`_nlmixr2omega_getOmegaInv`, inSEXP)
 }
 
-getdDomegaInv <- function(p) {
-    .Call(`_nlmixr2omega_getdDomegaInv`, p)
+getdDomegaInv <- function(inSEXP) {
+    .Call(`_nlmixr2omega_getdDomegaInv`, inSEXP)
 }
 
-getCholOmega1 <- function(p) {
-    .Call(`_nlmixr2omega_getCholOmega1`, p)
+getCholOmega1 <- function(inSEXP) {
+    .Call(`_nlmixr2omega_getCholOmega1`, inSEXP)
 }
 
 getOmegaR <- function(inSEXP) {

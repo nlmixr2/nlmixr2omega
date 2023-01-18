@@ -253,7 +253,7 @@ genOme <- function(mx=12) {
 #' d <- 10
 #' m <- matrix(rnorm(d^2), d, d)
 #' mcov <- tcrossprod(m, m)
-#' nlmixr2omega(mcov)
+#' ome <-nlmixr2omega(mcov)
 #' 
 nlmixr2omega <- function(mat, diag.xform = c("sqrt", "log", "identity")) {
   diag.xform <- as.integer(c("sqrt"=1L,
@@ -280,6 +280,13 @@ nlmixr2omega <- function(mat, diag.xform = c("sqrt", "log", "identity")) {
   }
   if (arg == "omegaInv") {
     return(getOmegaInv(obj))
+  }
+  ## FIXME
+  ## if (arg == "dDomegaInv") {
+  ##   return(getdDomegaInv(obj))
+  ## }
+  if (arg == "cholOmega1") {
+    return(getCholOmega1(obj))
   }
   NULL
 }
