@@ -267,18 +267,19 @@ nlmixr2omega <- function(mat, diag.xform = c("sqrt", "log", "identity")) {
   .ret
 }
 
-.getTheta <- function(var) {
-  as.vector(.Call(`_nlmixr2omega_getTheta`, var))
-}
-
-.setTheta <- function(var, theta) {
-  .Call(`_nlmixr2omega_setTheta`, var, theta)
-}
-
-.getOmega <- function(x) {
-  .Call(`_nlmixr2omega_getOmegaR`, x)
-}
-
-.getCholOmegaInv <- function(x) {
-.Call(`_nlmixr2omega_getCholOmegaInv`, x)
+#' @export
+`$.nlmixr2omega` <- function(obj, arg, exact = TRUE) {
+  if (arg == "theta") {
+    return(getTheta(obj))
+  }
+  if (arg == "omega") {
+    return(getOmega(obj))
+  }
+  if (arg == "cholOmegaInv") {
+    return(getCholOmegaInv(obj))
+  }
+  if (arg == "omeagInv") {
+    return(getOmegaInv(obj))
+  }
+  NULL
 }

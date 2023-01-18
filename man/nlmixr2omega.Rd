@@ -22,7 +22,7 @@ Create a nlmixr2omega for use in focei
 d <- 10
 m <- matrix(rnorm(d^2), d, d)
 mcov <- tcrossprod(m, m)
-nlmixr2omega(mcov)
+ome <- nlmixr2omega(mcov)
 
 }
 \author{
