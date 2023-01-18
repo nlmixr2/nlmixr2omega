@@ -270,15 +270,15 @@ nlmixr2omega <- function(mat, diag.xform = c("sqrt", "log", "identity")) {
 #' @export
 `$.nlmixr2omega` <- function(obj, arg, exact = TRUE) {
   if (arg == "theta") {
-    return(getTheta(obj))
+    return(as.vector(getTheta(obj)))
   }
   if (arg == "omega") {
-    return(getOmega(obj))
+    return(getOmegaR(obj))
   }
   if (arg == "cholOmegaInv") {
     return(getCholOmegaInv(obj))
   }
-  if (arg == "omeagInv") {
+  if (arg == "omegaInv") {
     return(getOmegaInv(obj))
   }
   NULL

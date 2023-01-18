@@ -17,8 +17,8 @@ getCholOmegaInv <- function(inSEXP) {
     .Call(`_nlmixr2omega_getCholOmegaInv`, inSEXP)
 }
 
-getOmegaInv <- function(p) {
-    .Call(`_nlmixr2omega_getOmegaInv`, p)
+getOmegaInv <- function(inSEXP) {
+    .Call(`_nlmixr2omega_getOmegaInv`, inSEXP)
 }
 
 getdDomegaInv <- function(p) {
