@@ -542,7 +542,7 @@ arma::vec _nlmixr2omega_full_tr28(_nlmixr2omega_full_omega *fome) {
 }
 
 //[[Rcpp::export]]
-arma::vec nlmixr2omega_tr28(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
-  _nlmixr2omega_full_omega* v = p.get();
-  return _nlmixr2omega_full_tr28(v);
+RObject nlmixr2omega_tr28(RObject inSEXP) {
+  _nlmixr2omega_full_omega p = omegaFromRgetFullOmegaFromSexp(inSEXP);
+  return wrap(_nlmixr2omega_full_tr28(&p));
 }

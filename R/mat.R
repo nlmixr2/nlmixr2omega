@@ -294,5 +294,8 @@ nlmixr2omega <- function(mat, diag.xform = c("sqrt", "log", "identity")) {
   if (arg == "logDetOMGAinv5") {
     return(getLogDetOMGAinv5(obj))
   }
+  if (arg == "tr28") {
+    return(nlmixr2omega_tr28(obj))
+  }
   NULL
 }

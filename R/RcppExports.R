@@ -41,7 +41,7 @@ getLogDetOMGAinv5 <- function(inSEXP) {
     .Call(`_nlmixr2omega_getLogDetOMGAinv5`, inSEXP)
 }
 
-nlmixr2omega_tr28 <- function(p) {
-    .Call(`_nlmixr2omega_nlmixr2omega_tr28`, p)
+nlmixr2omega_tr28 <- function(inSEXP) {
+    .Call(`_nlmixr2omega_nlmixr2omega_tr28`, inSEXP)
 }
 

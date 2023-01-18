@@ -125,13 +125,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // nlmixr2omega_tr28
-arma::vec nlmixr2omega_tr28(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
-RcppExport SEXP _nlmixr2omega_nlmixr2omega_tr28(SEXP pSEXP) {
+RObject nlmixr2omega_tr28(RObject inSEXP);
+RcppExport SEXP _nlmixr2omega_nlmixr2omega_tr28(SEXP inSEXPSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(nlmixr2omega_tr28(p));
+    Rcpp::traits::input_parameter< RObject >::type inSEXP(inSEXPSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlmixr2omega_tr28(inSEXP));
     return rcpp_result_gen;
 END_RCPP
 }
