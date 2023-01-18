@@ -103,13 +103,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // getCholOmega
-arma::mat getCholOmega(Rcpp::XPtr<_nlmixr2omega_full_omega> p);
-RcppExport SEXP _nlmixr2omega_getCholOmega(SEXP pSEXP) {
+RObject getCholOmega(RObject inSEXP);
+RcppExport SEXP _nlmixr2omega_getCholOmega(SEXP inSEXPSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::XPtr<_nlmixr2omega_full_omega> >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(getCholOmega(p));
+    Rcpp::traits::input_parameter< RObject >::type inSEXP(inSEXPSEXP);
+    rcpp_result_gen = Rcpp::wrap(getCholOmega(inSEXP));
     return rcpp_result_gen;
 END_RCPP
 }

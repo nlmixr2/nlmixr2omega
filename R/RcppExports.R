@@ -33,8 +33,8 @@ getOmegaR <- function(inSEXP) {
     .Call(`_nlmixr2omega_getOmegaR`, inSEXP)
 }
 
-getCholOmega <- function(p) {
-    .Call(`_nlmixr2omega_getCholOmega`, p)
+getCholOmega <- function(inSEXP) {
+    .Call(`_nlmixr2omega_getCholOmega`, inSEXP)
 }
 
 getLogDetOMGAinv5 <- function(p) {

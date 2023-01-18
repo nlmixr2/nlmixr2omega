@@ -498,7 +498,7 @@ arma::mat _nlmixr2omega_full_cholOmega(_nlmixr2omega_full_omega *fome) {
     _nlmixr2omega_ind_omega *ome = &(fome->omes[i]);
     int curDim = ome->dim;
     ret.submat(curBlock, curBlock,
-               curBlock+curDim, curBlock+curDim) =
+               curBlock+curDim-1, curBlock+curDim-1) =
       nlmixr2omega_cholOmega(ome);
     curBlock += curDim;
   }
@@ -506,9 +506,12 @@ arma::mat _nlmixr2omega_full_cholOmega(_nlmixr2omega_full_omega *fome) {
 }
 
 //[[Rcpp::export]]
-arma::mat getCholOmega(Rcpp::XPtr<_nlmixr2omega_full_omega> p) {
-  _nlmixr2omega_full_omega* v = p.get();
-  return _nlmixr2omega_full_omegaR(v);
+RObject getCholOmega(RObject inSEXP) {
+  _nlmixr2omega_full_omega p = omegaFromRgetFullOmegaFromSexp(inSEXP);
+  RObject ret = wrap(_nlmixr2omega_full_cholOmega(&p));
+  List v = as<List>(inSEXP);
+  ret.attr("dimnames") = v[1];
+  return ret;
 }
 
 double _nlmixr2omega_full_logDetOMGAinv5(_nlmixr2omega_full_omega *fome) {

@@ -288,5 +288,9 @@ nlmixr2omega <- function(mat, diag.xform = c("sqrt", "log", "identity")) {
   if (arg == "cholOmega1") {
     return(getCholOmega1(obj))
   }
+
+  if (arg == "cholOmega") {
+    return(getCholOmega(obj))
+  }
   NULL
 }
